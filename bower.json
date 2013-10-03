@@ -1,0 +1,13 @@
+{
+  "name": "huemulator",
+  "version": "0.0.1",
+  "main": "static/css/style.css",
+  "ignore": [
+    ".jshintrc",
+    "**/*.txt"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.0.0"
+  },
+  "devDependencies": {}
+}

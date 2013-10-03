@@ -1,0 +1,16 @@
+{
+  "name": "HuEmulator",
+  "description": "Emulator for Philips Hue API",
+  "author": "Dave Brotherstone <davegb@pobox.com>",
+  "version": "0.0.1",
+  "dependencies": {
+    "socket.io": "0.8.7",
+    "hapi": "~1.11.1"
+  },
+  "devDependencies": {
+    "vows": "0.5.x",
+    "mocha": "*",
+    "should": "*"
+  },
+  "engine": "node >= 0.8.0"
+}

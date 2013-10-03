@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+<body ng-app="huemulator">
+<h2>Hue Emulator</h2>
+
+<svg ng-controller="LightsCtrl" height="200" version="1.1" width="100%" xmlns="http://www.w3.org/2000/svg" style="overflow: hidden; position: absolute; left: 10px; top: 50px;background-color:#000;">
+    <defs style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></defs>
+    <circle ng-attr-cx="{{(100 * $index) + 50}}" cy="60" r="45" ng-repeat="(id,light) in data.lights" ng-style="{ 'fill' : light.color}" stroke="#ffffff">
+
+    </circle>
+</svg>
+
+
+<script src="socket.io/socket.io.js"></script>
+<script src="bower_components/angular/angular.js"></script>
+<script src="js/lights.js"></script>
+<script src="js/hueNotifyService.js"></script>
+<script src="js/hueLightState.js"></script>
+</body>
+</html>

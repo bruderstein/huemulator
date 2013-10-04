@@ -4,6 +4,7 @@
 
 var state = require('./state');
 var remoteLights = require('../app/remoteLights');
+var remoteApiNotification = require('../app/remoteApiNotification');
 
 /*   Much of the colour handling is taken from https://github.com/PhilipsHue/PhilipsHueSDKiOS/blob/master/ApplicationDesignNotes/RGB%20to%20xy%20Color%20conversion.md
  *   (master at xxxxxx)
@@ -18,9 +19,7 @@ function getLightsHandler(request) {
 
     request.reply(returnState);
 
-    remoteLights.addRequest( {
-
-    })
+    remoteApiNotification.notifyApiCall(request, returnState);
 }
 
 var modelCapability = {
@@ -212,6 +211,7 @@ function setLightStateHandler(request) {
     remoteLights.sendLight(light.id, light);
 
     request.reply(response);
+    remoteApiNotification.notifyApiCall(request, response);
 }
 
 

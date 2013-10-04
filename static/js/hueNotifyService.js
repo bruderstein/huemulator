@@ -1,6 +1,6 @@
 
-angular.module('huemulator.notifyService', ['huemulator.hueLightState'])
-    .factory('hueNotifyService', ['hueLightState', '$rootScope', function(hueLightState, $rootScope) {
+angular.module('huemulator.notifyService', ['huemulator.hueLightState', 'huemulator.hueCalls'])
+    .factory('hueNotifyService', ['hueLightState', '$rootScope', 'hueCalls', function(hueLightState, $rootScope, hueCalls) {
 
         function hsbToRgb(hsb) {
 
@@ -68,12 +68,23 @@ angular.module('huemulator.notifyService', ['huemulator.hueLightState'])
                 }
             });
         }
+
+        function appendApiCall(data) {
+            $rootScope.$apply(function() {
+                hueCalls.calls.push(data);
+            });
+        }
+
         return {
             initialise : function() {
                 var socket = io.connect();
                 socket.on('state', function(data){
                     console.log(data);
                     updateState(data);
+                });
+
+                socket.on('apicall', function(data) {
+                    appendApiCall(data);
                 });
 
             }

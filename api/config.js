@@ -1,4 +1,5 @@
 var state = require('./state');
+var remoteApiNotification = require('../app/remoteApiNotification');
 
 function getFullStateHandler(request) {
     // Automatically add the user in for now.
@@ -68,6 +69,7 @@ function getFullStateHandler(request) {
         }
 
     request.reply(response);
+    remoteApiNotification.notifyApiCall(request, response);
 }
 
 

@@ -24,9 +24,6 @@ html {
 }
 
 
-h2 {
-    text-align: center;
-}
 /*
  * Remove text-shadow in selection highlight: h5bp.com/i
  * These selection rule sets have to be separate.
@@ -102,14 +99,60 @@ textarea {
    ========================================================================== */
 
 
+h2 {
+    text-align: center;
+}
+div#call-list {
+    width: 260px;
+    float:left;
+}
+
+div#call-details {
+    border: 2px solid #5bc0de;
+    border-radius: 3px;
+    margin-left: 260px;
+    font-family: "Consolas", "Courier New", Courier, mono;
+}
+
+ul.apicalls {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+ul.apicalls li {
+    /* IE9.  Hey microsoft, if IE used webkit, people wouldn't hate it... */
+    list-style-type: none;
+
+    width: 250px;
+    padding: 5px;
+}
 
 
+ul.apicalls li > a, ul.apicalls li > a:visited {
+    color: #d0e3f0;
 
+}
+ul.apicalls li.failed > a {
+    color: #FF0000;
+    font-weight: bold;
+}
 
+ul.apicalls li.selected, ul.apicalls li.selected > a, ul.apicalls li.selected > a:visited {
+    background-color: #5bc0de;
+    color: #222;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+}
 
+span.api-call {
+    font-weight: bold;
+}
 
-
-
+span.response-title {
+    font-family: Arial;
+    font-style: italic;
+}
 
 
 

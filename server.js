@@ -15,7 +15,7 @@ apiRoutes.addRoutes(server);
 generalRoutes.addRoutes(server);
 
 server.start(function () {
-    var io = socketIO.listen(server.listener);
+    var io = socketIO.listen(server.listener, { log: false});
 
     socketIoContainer.io = io;
 

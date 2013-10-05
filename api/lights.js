@@ -139,6 +139,9 @@ function setLightStateHandler(request) {
     var light = state.lights[id];
     var response = [];
 
+    request.payload = JSON.parse(request.rawPayload.toString());
+
+    console.log(request.payload);
     if (request.payload.on === 'true') {
         light.on = true;
         var change = {};
@@ -226,10 +229,9 @@ module.exports = {
             }
             , {
                 method : 'PUT'
-                , path : '/api/{username}/lights/{id}'
+                , path : '/api/{username}/lights/{id}/state'
                 , config : {
                     handler : setLightStateHandler
-                    , payload : 'parse'
                 }
             }
         ])

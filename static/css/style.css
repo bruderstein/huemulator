@@ -103,14 +103,14 @@ h2 {
     text-align: center;
 }
 div#call-list {
-    width: 260px;
+    width: 500px;
     float:left;
 }
 
 div#call-details {
     border: 2px solid #5bc0de;
     border-radius: 3px;
-    margin-left: 260px;
+    margin-left: 510px;
     font-family: "Consolas", "Courier New", Courier, mono;
 }
 
@@ -124,21 +124,21 @@ ul.apicalls li {
     /* IE9.  Hey microsoft, if IE used webkit, people wouldn't hate it... */
     list-style-type: none;
 
-    width: 250px;
+    width: 500px;
     padding: 5px;
 }
 
 
-ul.apicalls li > a, ul.apicalls li > a:visited {
+ul.apicalls li > span {
     color: #d0e3f0;
 
 }
-ul.apicalls li.failed > a {
+ul.apicalls li.failed > span {
     color: #FF0000;
     font-weight: bold;
 }
 
-ul.apicalls li.selected, ul.apicalls li.selected > a, ul.apicalls li.selected > a:visited {
+ul.apicalls li.selected, ul.apicalls li.selected > span {
     background-color: #5bc0de;
     color: #222;
     border-top-left-radius: 3px;

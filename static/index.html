@@ -17,15 +17,17 @@
 <div>
     <h3>API Calls</h3>
     <div id="call-list">
-<ul class="apicalls">
-    <li ng-repeat="call in data.calls" ng-class="{ selected : call.selected, failed : call.failed }">
-        <span ng-click="selectApiCall($index)" ng-bind="call.method + ' ' + call.path"></span>
-    </li>
-</ul>
-   </div>
+        <ul class="apicalls">
+            <li ng-repeat="call in data.calls"
+                ng-class="{ selected : call.selected, failed : call.failed }"
+                ng-click="selectApiCall($index)" >
+                <span  ng-bind="call.method|uppercase"></span> <span ng-bind="call.path"></span>
+            </li>
+        </ul>
+    </div>
     <div id="call-details" ng-show="data.selectedCallDetails">
         <pre>
-<span class="api-call" ng-bind="data.selectedCallDetails.method|uppercase"></span> <span ng-bind="data.selectedCallDetails.path"></span>
+<span class="api-call" ng-bind="data.selectedCallDetails.method|uppercase"></span> <span class="api-call" ng-bind="data.selectedCallDetails.path"></span>
 
 <span ng-show="data.selectedCallDetails.payload" ng-bind="data.selectedCallDetails.payload | json:'   '"></span>
 

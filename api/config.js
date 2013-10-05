@@ -4,8 +4,8 @@ var remoteApiNotification = require('../app/remoteApiNotification');
 function getFullStateHandler(request) {
     // Automatically add the user in for now.
     state.whitelist[request.params['username']] = {
-            'last user date' : new Date().toISOString()
-            , 'create data' : new Date().toISOString()
+            'last user date' : new Date().toISOString().substr(0, 19)
+            , 'create data' : new Date().toISOString().substr(0, 19)
             , name : 'android'
     };
     var response = {};
@@ -44,17 +44,31 @@ function getFullStateHandler(request) {
 
     }
 
-    response.groups = {};
+    response.groups = {
+        1 : {
+            action : {
+                on : true
+                , bri: 254
+                , hue: 33536
+                , sat: 144
+                , xy: [0.346, 0.3568]
+                , ct: 201
+                , effect: "none"
+                , colormode: "xy"
+            }
+            , lights: ["1", "2"]
+            , name: "Group 1"
+        }};
     response.config = {
         name : 'Philips hue'
-        , mac: '00:24:1d:0e:e9:2f'  // Might be able to get this from node, somehow
+        , mac: '00:00:88:00:bb:ee'  // Might be able to get this from node, somehow
         , dhcp : true
-        , ipaddress : '192.168.8.7' //request.raw.req.localAddress
+        , ipaddress : '192.168.8.10' //request.raw.req.localAddress
         , netmask : "255.255.255.0"   // I'm guessing. Prob need to look the address up from require('os).networkInterfaces()
         , gateway : "192.168.8.1"   // how should I know, and more to the point, why do you want to know?
         , proxyaddress : ''
         , proxyport : 0
-        , UTC : new Date().toISOString()
+        , UTC : new Date().toISOString().substr(0, 19)
         , whitelist : state.whitelist
         , swversion : '01003372'   // From the example
         , swupdate: {
@@ -64,11 +78,31 @@ function getFullStateHandler(request) {
             , notify : false
         }
         , linkbutton: state.linkbutton
-        , portalservice: false
-        , schedules : {}  // At the moment, no schedules supported
+        , portalservices: false
+        };
+    response.schedules = {
+        "1": {
+            "name": "schedule",
+                "description": "",
+                "command": {
+                "address": "\/api\/0\/groups\/0\/action",
+                    "body": {
+                    "on": true
+                },
+                "method": "PUT"
+            },
+            "time": "2012-10-29T12:00:00"
         }
+    };
 
-    request.reply(response);
+    request.headers
+    request.reply(response)
+        .header('Access-Control-Allow-Origin', '*')
+        .header('Access-Control-Allow-Methos', 'GET, PUT, POST, DELETE, OPTIONS')
+        .header('Access-Control-Allow-Headers', 'Content-Type')
+        .header('Content-Type', 'application/json; charset=UTF-8')
+        .header('content-encoding', 'identity');
+
     remoteApiNotification.notifyApiCall(request, response);
 }
 

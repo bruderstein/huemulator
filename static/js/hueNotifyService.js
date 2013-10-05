@@ -56,11 +56,7 @@ angular.module('huemulator.notifyService', ['huemulator.hueLightState', 'huemula
         function updateState(state) {
             var currentState = hueLightState.lights[state.id];
             $rootScope.$apply(function() {
-                if (state.on) {
-                    // This is a very cheap hue conversion.  This really needs a professional colour expert to
-                    // convert the hue from the Philips Hue bulbs to a monitor
-                    var resultColor = hsbToRgb(normalizeHueColor(state.hue, state.sat, state.bri));
-
+                if (state.config.state.on) {
                     currentState.color = 'rgb(' + state.color.r + ',' + state.color.g + ',' + state.color.b + ')';
 
                 } else {

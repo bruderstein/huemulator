@@ -3,11 +3,13 @@ var remoteApiNotification = require('../app/remoteApiNotification');
 
 function getFullStateHandler(request) {
     // Automatically add the user in for now.
-    state.whitelist[request.params['username']] = {
+    var config = state.getConfig();
+    config.config.whitelist[request.params['username']] = {
             'last user date' : new Date().toISOString().substr(0, 19)
             , 'create data' : new Date().toISOString().substr(0, 19)
             , name : 'android'
     };
+   /*
     var response = {};
     response.lights = {};
     for(var lightId in state.lights) {
@@ -94,16 +96,15 @@ function getFullStateHandler(request) {
             "time": "2012-10-29T12:00:00"
         }
     };
-
-    request.headers
-    request.reply(response)
+*/
+    request.reply(config)
         .header('Access-Control-Allow-Origin', '*')
         .header('Access-Control-Allow-Methos', 'GET, PUT, POST, DELETE, OPTIONS')
         .header('Access-Control-Allow-Headers', 'Content-Type')
         .header('Content-Type', 'application/json; charset=UTF-8')
         .header('content-encoding', 'identity');
 
-    remoteApiNotification.notifyApiCall(request, response);
+    remoteApiNotification.notifyApiCall(request, config);
 }
 
 

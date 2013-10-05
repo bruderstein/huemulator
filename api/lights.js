@@ -83,9 +83,9 @@ function XyToRgb(cx, cy, brightness) {
     console.log({ r: r, g: g, b:b});
 
     var result = {
-        r : r <= 0.0031308 ? 12.92 * r : (1.0 + 0.055) * Math.pow(r, (1.0 / 2.4)) - 0.055
-        , g : g <= 0.0031308 ? 12.92 * g : (1.0 + 0.055) * Math.pow(g, (1.0 / 2.4)) - 0.055
-        , b : b <= 0.0031308 ? 12.92 * b : (1.0 + 0.055) * Math.pow(b, (1.0 / 2.4)) - 0.055
+        r : Math.round(255 * (r <= 0.0031308 ? 12.92 * r : (1.0 + 0.055) * Math.pow(r, (1.0 / 2.4)) - 0.055))
+        , g : Math.round(255 * (g <= 0.0031308 ? 12.92 * g : (1.0 + 0.055) * Math.pow(g, (1.0 / 2.4)) - 0.055))
+        , b : Math.round(255 * (b <= 0.0031308 ? 12.92 * b : (1.0 + 0.055) * Math.pow(b, (1.0 / 2.4)) - 0.055))
     };
 
 
@@ -136,19 +136,19 @@ function hueToRgb(v1, v2, vH) {
 
 function setLightStateHandler(request) {
     var id = request.params['id'];
-    var light = state.lights[id];
+    var light = state.getLight(id);
     var response = [];
 
     request.payload = JSON.parse(request.rawPayload.toString());
 
     console.log(request.payload);
-    if (request.payload.on === 'true') {
-        light.on = true;
+    if (request.payload.on == true) {
+        light.config.state.on = true;
         var change = {};
         change["/lights/" + id + "/on"] = true;
         response.push({ "success": change });
-    } else if (request.payload.on === 'false') {
-       light.on = false;
+    } else if (request.payload.on !== undefined && request.payload.on == false) {
+       light.config.state.on = false;
         var change = {};
         change["/lights/" + id + "/on"] = false;
         response.push({ "success": change });
@@ -168,10 +168,14 @@ function setLightStateHandler(request) {
         }
 
         var rgb = XyToRgb(cx, cy, brightness / 255.0);
+        light.config.state.xy = [cx, cy];
+        light.config.state.colormode = 'cx';
+        console.log('XY resulted in ');
+        console.log(rgb);
         light.color = rgb;
 
         var change = {};
-        change["/lights/" + id + "/xy"] = [cx, cy];
+        change["/lights/" + id + "/xy"] = request.payload.xy;
         response.push({ "success": change });
     }
 
@@ -181,7 +185,7 @@ function setLightStateHandler(request) {
         hsb.hue = request.payload.hue / 65535.0;
         hasNewHsb = true;
         var change = {};
-        change["/lights/" + id + "/hue"] = hsb.hue;
+        change["/lights/" + id + "/hue"] = request.payload.hue;
         response.push({ "success": change });
     }
 
@@ -189,28 +193,33 @@ function setLightStateHandler(request) {
         hsb.sat = request.payload.sat / 255.0;
         hasNewHsb = true;
         var change = {};
-        change["/lights/" + id + "/sat"] = hsb.sat;
+        change["/lights/" + id + "/sat"] = request.payload.sat;
         response.push({ "success": change });
     }
 
     if (request.payload.bri) {
-        hsb.bri = request.payload.bri / 255.0;
-        hasNewHsb = true;
+        light.config.state.bri = request.payload.bri;
         var change = {};
-        change["/lights/" + id + "/bri"] = hsb.bri;
+        change["/lights/" + id + "/bri"] = request.payload.bri;
         response.push({ "success": change });
     }
 
     if (hasNewHsb) {
         hsb = {
-            hue: hsb.hue || light.hue / 65535.0
-           , sat : hsb.sat || light.sat / 255
-           , bri : hsb.bri || light.bri / 255
+            hue: hsb.hue || light.config.state.hue / 65535.0
+           , sat : hsb.sat || light.config.state.sat / 255
+           , bri : light.config.state.bri / 255
         };
         console.log('Converting hsb');
         console.log(hsb);
+        light.config.state.hue = hsb.hue;
+        light.config.state.bri = hsb.bri;
+        light.config.state.sat = hsb.sat;
+        light.config.state.colormode = 'hs';
         light.color = hsbToRgb(hsb); // hslToRgb(hsb.hue, hsb.sat, hsb.bri);
     }
+    console.log('Updating light ' + light.id);
+    console.log(light.color);
     remoteLights.sendLight(light.id, light);
 
     request.reply(response);

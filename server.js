@@ -4,6 +4,7 @@ var socketIO = require('socket.io');
 var socketIoContainer = require('./app/socketIoContainer')
 var generalRoutes = require('./app/routes');
 var apiRoutes = require('./api/routes');
+var discovery = require('./api/discovery');
 var port = 80;
 var server = new hapi.createServer('0.0.0.0 ', port, {
     files : {
@@ -14,7 +15,10 @@ var server = new hapi.createServer('0.0.0.0 ', port, {
 apiRoutes.addRoutes(server);
 generalRoutes.addRoutes(server);
 
+discovery.enableDiscovery();
+
 server.start(function () {
+
     var io = socketIO.listen(server.listener, { log: false});
 
     socketIoContainer.io = io;

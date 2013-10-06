@@ -85,4 +85,9 @@ Disclaimer
 The is a weekend hack to better explore the Philips API, and have a better play with [Angular.JS](http://www.angularjs.org), as such, things might not be too smooth or there may be issues lurking.  I went against my principals and didn't 
 write tests, as there were too many new libraries for me to fight with. Sorry. When I'm more comfortable with the libraries, I'll restructure it a bit so that it's more testable, and write some proper tests.
 
+Credits
+-------
 
+Portions of the code are taken from [the hue upnp emulator](https://github.com/sagen/hue-upnp), many thanks for
+making that code public.  I used the [hue-simulator](https://github.com/nooblucker/hueSimulator) to fix some
+responses.  The hue-simulator is an excellent project, if you just want to play with the API. 

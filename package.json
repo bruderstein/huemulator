@@ -3,7 +3,7 @@
   "description": "Emulator for Philips Hue API",
   "keywords": [ "hue","bridge", "emulator", "philips" ],
   "author": "Dave Brotherstone <davegb@pobox.com>",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "license": "MIT",
   "readmeFilename": "README.md",
   "main": "server.js",

@@ -173,6 +173,40 @@ function fixRequest(request) {
     request.payload = JSON.parse(request.rawPayload.toString());
 }
 
+function setState(lightId, newState) {
+    var light = state.getLight(lightId);
+    if (light) {
+        if (newState.on != undefined) {
+            light.config.state.on = newState.on;
+        }
+
+        if (newState.bri != undefined) {
+            light.config.state.bri = newState.bri;
+        }
+        if (newState.hue != undefined) {
+            light.config.state.hue = newState.hue;
+        }
+        if (newState.sat != undefined) {
+            light.config.state.sat = newState.sat;
+        }
+        if (newState.xy != undefined) {
+            light.config.state.xy = newState.xy;
+        }
+        if (newState.ct != undefined) {
+            light.config.state.ct = newState.ct;
+        }
+        if (newState.alert != undefined) {
+            light.config.state.alert = newState.alert;
+        }
+        if (newState.effect != undefined) {
+            light.config.state.effect = newState.effect;
+        }
+
+        remoteLights.sendLight(lightId, light);
+    }
+}
+
+
 function setLightStateHandler(request) {
     fixRequest(request);
 
@@ -264,7 +298,8 @@ function setLightNameHandler(request) {
 
 module.exports = {
 
-    addRoutes : function(server) {
+    setState : setState
+    , addRoutes : function(server) {
         server.route([
             {
                 method : 'GET'

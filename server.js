@@ -5,7 +5,7 @@ var socketIoContainer = require('./app/socketIoContainer')
 var generalRoutes = require('./app/routes');
 var apiRoutes = require('./api/routes');
 var remoteLights = require('./app/remoteLights');
-
+var webApi = require('./webapi/control');
 var state = require('./api/state');
 var discovery = require('./api/discovery');
 
@@ -26,6 +26,12 @@ apiRoutes.addRoutes(server);
 generalRoutes.addRoutes(server);
 
 discovery.enableDiscovery();
+
+// Add the initial 3 lights
+webApi.addLight({model : 'LCT001'});
+webApi.addLight({model : 'LCT001'});
+webApi.addLight({model : 'LCT001'});
+
 
 server.start(function () {
 

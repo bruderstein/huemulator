@@ -1,8 +1,10 @@
 
-angular.module('huemulator', ['huemulator.notifyService', 'huemulator.hueLightState', 'huemulator.hueCalls']);
+angular.module('huemulator', ['huemulator.notifyService', 'huemulator.hueLightState', 'huemulator.hueCalls',
+                              'webApi']);
 
 angular.module('huemulator')
-    .controller('LightsCtrl', ['$scope', 'hueNotifyService', 'hueLightState', 'hueCalls', function($scope, hueNotifyService, hueLightState, hueCalls) {
+    .controller('LightsCtrl', ['$scope', 'hueNotifyService', 'hueLightState', 'hueCalls', 'webApi',
+        function($scope, hueNotifyService, hueLightState, hueCalls, webApi) {
 
         var lights = hueLightState.lights;
 
@@ -17,6 +19,11 @@ angular.module('huemulator')
             $scope.data.selectedCallDetails = $scope.data.calls[index];
 
         }
+
+        $scope.addLight = function() {
+            webApi.addLight({ model: 'LCT001'});
+        }
         hueNotifyService.initialise();
 
     }]);
+

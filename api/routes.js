@@ -3,6 +3,7 @@ var remoteApiNotification = require('../app/remoteApiNotification');
 var lightsApi = require('./lights');
 var configApi = require('./config');
 var discoveryApi = require('./discovery');
+var webApi = require('../webapi/control');
 var hapi = require('hapi');
 
 
@@ -22,7 +23,7 @@ exports.addRoutes = function(server) {
     lightsApi.addRoutes(server);
     configApi.addRoutes(server);
     discoveryApi.addRoutes(server);
-
+    webApi.addRoutes(server);
     server.route( [      // We should be able to use method:'*' for this, but that doesn't seem to work, at least with hapi 1.11
         {
             method: 'GET'

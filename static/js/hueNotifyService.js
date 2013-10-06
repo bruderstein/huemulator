@@ -55,6 +55,15 @@ angular.module('huemulator.notifyService', ['huemulator.hueLightState', 'huemula
 
         function updateState(state) {
             var currentState = hueLightState.lights[state.id];
+            if (!currentState) {
+                // Light didn't exist before, let's add it
+                currentState = {
+                    name: state.config.name
+                    , color: '#000000'
+                };
+                hueLightState.lights[state.id] = currentState;
+            }
+
             $rootScope.$apply(function() {
                 if (state.config.state.on) {
                     currentState.color = 'rgb(' + state.color.r + ',' + state.color.g + ',' + state.color.b + ')';
@@ -75,7 +84,6 @@ angular.module('huemulator.notifyService', ['huemulator.hueLightState', 'huemula
             initialise : function() {
                 var socket = io.connect();
                 socket.on('state', function(data){
-                    console.log(data);
                     updateState(data);
                 });
 

@@ -15,7 +15,7 @@ var ip = ipaddress.getIpAddress();
 var config = {
         lights :
         {
-            '1' : {
+            /*'1' : {
                 'state' : {
                     on : false
                     , bri : 0
@@ -101,7 +101,7 @@ var config = {
                     , 8 : 'none'
 
                 }
-            }
+            } */
         }
     , groups : {}
     , config : {
@@ -153,6 +153,47 @@ var lights = {
 
 };
 
+
+var lightDefaults = {
+    'LCT001' : {
+        capability: {
+            red : { x : 0.675,  y: 0.322 }
+            , green : { x : 0.4091, y : 0.518}
+            , blue : { x: 0.167, y : 0.04 }
+        }
+        , defaults : {
+                'state' : {
+                    on : true
+                    , bri : 254
+                    , hue : 0
+                    , sat : 255
+                    , xy : [0.3142, 0.331]
+                    , ct : 0
+                    , alert : 'none'
+                    , effect : 'none'
+                    , colormode : 'xy'
+                    , reachable : true
+                }
+                , type : 'Extended color light'
+                , name : 'Light'
+                , modelid : 'LCT001'
+                , swversion : '65003148'   // I don't know, copied from example
+                , pointsymbol : {
+                    1 : 'none'
+                    , 2 : 'none'
+                    , 3 : 'none'
+                    , 4 : 'none'
+                    , 5 : 'none'
+                    , 6 : 'none'
+                    , 7 : 'none'
+                    , 8 : 'none'
+
+                }
+            }
+    }
+}
+
+
 exports.getConfig = function() {
     config.config.UTC = new Date().toISOString().substr(0, 19);
     return config;
@@ -160,6 +201,55 @@ exports.getConfig = function() {
 
 exports.getLight = function(id) {
     return lights[id];
+}
+
+exports.addLight = function(id) {
+    lights[id] = {
+        id: id
+        , color: { r: 255, g: 255, b: 255}
+        , config: config.lights[id]
+    };
+}
+
+function clone(o) {
+    var result = undefined;
+    switch(typeof(o)) {
+        case 'object':
+            if (o === null) {
+                result = null;
+            }
+            else if (Array.isArray(o)) {
+                result = [];
+                for(key in o) {
+                    result[key] = clone(o[key]);
+                }
+            }
+            else {
+                result = {}
+                for(var key in o) {
+                    result[key] = clone(o[key]);
+                }
+            }
+            break;
+
+        case 'undefined':
+            break;
+
+        default:
+            result = o;
+            break;
+    }
+    return result;
+}
+
+exports.getLightDefaults = function(model) {
+    var lightSpec = lightDefaults[model];
+    if (lightSpec) {
+        var newLight = clone(lightSpec.defaults);
+        return newLight;
+    } else {
+        return undefined;
+    }
 }
 
 // Default to port 80

@@ -203,6 +203,14 @@ exports.getLight = function(id) {
     return lights[id];
 }
 
+exports.getLightCapabilities = function(model) {
+    var defaults = lightDefaults[model];
+    if (defaults) {
+        return defaults.capability;
+    }
+    return undefined;
+}
+
 exports.addLight = function(id) {
     lights[id] = {
         id: id

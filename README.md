@@ -69,6 +69,15 @@ api/utility/color.js.  There is some information on [the Philips developer site]
 If you own a hue, once we've got the colour conversions corrected, it would be great to compare the colours displayed
 and see if we can get them as near to the real thing as possible.
 
+Once you've cloned the repository, just do a 
+  
+    npm install
+
+to fetch the necessary node modules, and then a
+
+    bower install
+
+to fetch the bower components.
 
 Disclaimer
 ----------

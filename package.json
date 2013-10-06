@@ -3,7 +3,7 @@
   "description": "Emulator for Philips Hue API",
   "keywords": [ "hue","bridge", "emulator", "philips" ],
   "author": "Dave Brotherstone <davegb@pobox.com>",
-  "version": "0.4",
+  "version": "0.4.0",
   "license": "MIT",
   "readmeFilename": "README.md",
   "main": "server.js",
@@ -19,13 +19,13 @@
     "mocha": "*",
     "should": "*"
   },
-  "engine": "node >= 0.8.0"
+  "engine": "node >= 0.8.0",
   "repository": {
      "type": "git",
      "url": "https://github.com/davegb3/huemulator.git"
    },
   "bugs": "https://github.com/davegb3/huemulator/issues",
-  "preferGlobal": "true"
+  "preferGlobal": "true",
   "bin" : {
      "huemulator": "./bin/huemulator"
    }

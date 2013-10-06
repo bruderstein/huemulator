@@ -146,7 +146,10 @@ function calculateColor(light) {
 
             }
 
-            // Patch the brightess to 0.1 < x < 1.0, as brightness 0 is not off
+            // TODO: Patch the brightess to 0.1 < x < 1.0, as brightness 0 is not off
+            // We can't do this yet, as the XY conversion is, ahem, less-than-perfect.  A simple patching of the range
+            // from 0-100% to 10% to 100% results in a very abrupt "off" at the bottom end of the range. I suspect
+            // that's down to the dodgy conversion from XY. When that's fixed, we can patch the brightness
             var rgb = XyToRgb(cx, cy, light.config.state.bri / 255.0);
             light.color = rgb;
             break;
@@ -163,7 +166,30 @@ function calculateColor(light) {
 
 
         case 'ct':
-            // CT isn't supported at the moment
+            // Poor man's CT conversion.
+            var ct = light.config.state.ct;
+            var normalizedCt = (ct - 153) / 346;
+            console.log('NOrmalized ct ' + normalizedCt);
+
+            var distance, color;
+            if (normalizedCt >= 0.5) {
+                distance = normalizedCt - 0.5;
+                color = {
+                    r: 255
+                    , b: Math.round(255 - (distance * 64))
+                    , g: Math.round(255 - (distance * 64))
+                };
+
+            } else {
+                distance = 0.5 - normalizedCt;
+                color = {
+                    r: Math.round(255 - (distance * 64))
+                    , b: 255
+                    , g: Math.round(255 - (distance * 64))
+                };
+            }
+            light.color = color;
+
             break;
     }
 
@@ -202,6 +228,7 @@ function setState(lightId, newState) {
             light.config.state.effect = newState.effect;
         }
 
+        calculateColor(light);
         remoteLights.sendLight(lightId, light);
     }
 }
@@ -265,6 +292,14 @@ function setLightStateHandler(request) {
         response.push({ "success": change });
     }
 
+    if (request.payload.ct) {
+        light.config.state.ct = request.payload.ct;
+        light.config.state.colormode = 'ct';
+        var change = {};
+        change["/lights/" + id + "/ct"] = request.payload.ct;
+        response.push({ "success": change });
+
+    }
 
 
     calculateColor(light);

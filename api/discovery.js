@@ -70,7 +70,7 @@ exports.enableDiscovery = function() {
                 var response = "HTTP/1.1 200 OK\r\n\
 CACHE-CONTROL: max-age=100\r\n\
 EXT:\r\n\
-LOCATION: http://192.168.8.10:80/description.xml\r\n\
+LOCATION: http://" + ip + ":" + port + "/description.xml\r\n\
 SERVER: FreeRTOS/6.0.5, UPnP/1.0, IpBridge/0.1\r\n\
 ST: upnp:rootdevice\r\n\
 USN: uuid:2fa00080-d000-11e1-9b23-001f80007bbe::upnp:rootdevice\r\n";

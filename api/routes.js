@@ -6,7 +6,12 @@ var discoveryApi = require('./discovery');
 var hapi = require('hapi');
 
 
+function fixRequest(request) {
+    request.payload = JSON.parse(request.rawPayload.toString());
+}
+
 function failedApiCallHandler(request) {
+    fixRequest(request);
     remoteApiNotification.notifyFailedApiCall(request, {code:404,error:'Not Found'});
     var e = hapi.error.notFound('Unknown or unsupported API call');
     request.reply(e)

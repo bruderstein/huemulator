@@ -1,4 +1,11 @@
 var dgram = require('dgram');
+var ipaddress = require('./utility/ipaddress');
+var state = require('./state');
+var ip = ipaddress.getIpAddress();
+var port = state.port;
+
+// Credit to Sagen here - this response, and the UPnP M-SEARCH response
+// taken from https://github.com/sagen/hue-upnp
 
 var discoveryResponse = '<?xml version="1.0"?>\
     <root xmlns="urn:schemas-upnp-org:device-1-0">\
@@ -6,11 +13,11 @@ var discoveryResponse = '<?xml version="1.0"?>\
             <major>1</major>\
             <minor>0</minor>\
         </specVersion>\
-        <URLBase>http://192.168.8.10/</URLBase>\
+        <URLBase>http://' + ip + (port == 80 ? '' : port) +'/</URLBase>\
         <device>\
             <deviceType>urn:schemas-upnp-org:device:Basic:1</deviceType>\
             <friendlyName>Philips hue Bridge Router</friendlyName>\
-            <manufacturer>Sagen</manufacturer>\
+            <manufacturer></manufacturer>\
             <manufacturerURL>http://github.com/sagen</manufacturerURL>\
             <modelDescription>Philips hue Personal Wireless Lighting Bridge Router</modelDescription>\
             <modelName>Philips hue bridge 2012 Router</modelName>\

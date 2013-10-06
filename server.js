@@ -1,12 +1,22 @@
-//setup Dependencies
 var hapi = require('hapi');
+
 var socketIO = require('socket.io');
 var socketIoContainer = require('./app/socketIoContainer')
 var generalRoutes = require('./app/routes');
 var apiRoutes = require('./api/routes');
+var remoteLights = require('./app/remoteLights');
+
+var state = require('./api/state');
 var discovery = require('./api/discovery');
-var port = 80;
-var server = new hapi.createServer('0.0.0.0 ', port, {
+
+if (process.argv.length > 2) {
+    state.port =  parseInt(process.argv[2]);
+} else {
+    state.port = 80;
+}
+
+
+var server = new hapi.createServer('0.0.0.0 ', state.port, {
     files : {
         'relativeTo' : 'routes'
     }
@@ -25,7 +35,8 @@ server.start(function () {
 
     io.sockets.on('connection', function(socket){
         console.log('Client Connected');
+        remoteLights.sendAllLights();
     });
 })
 
-console.log('Listening on http://0.0.0.0:' + port );
+console.log('Listening on http://0.0.0.0:' + state.port );

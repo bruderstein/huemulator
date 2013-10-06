@@ -161,3 +161,6 @@ exports.getConfig = function() {
 exports.getLight = function(id) {
     return lights[id];
 }
+
+// Default to port 80
+exports.port = 80;

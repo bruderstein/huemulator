@@ -80,7 +80,6 @@ function XyToRgb(cx, cy, brightness) {
     var r = pX  * 3.2410 - pY * 1.5374 - pZ * 0.4986;
     var g = -pX * 0.9692 + pY * 1.8760 + pZ * 0.0416;
     var b = pX  * 0.0556 - pY * 0.2040 + pZ * 1.0570;
-    console.log({ r: r, g: g, b:b});
 
     var result = {
         r : Math.round(255 * (r <= 0.0031308 ? 12.92 * r : (1.0 + 0.055) * Math.pow(r, (1.0 / 2.4)) - 0.055))
@@ -134,12 +133,53 @@ function hueToRgb(v1, v2, vH) {
     return ( v1 );
 }
 
+/** Uses the mode of the light in order to set the light.color attribute
+ *
+ * @param light The light record from the state
+ */
+function calculateColor(light) {
+    switch(light.config.state.colormode) {
+        case 'xy':
+            var cx = light.config.state.xy[0];
+            var cy = light.config.state.xy[1];
+            if (!inReachOfLamps(light.model, cx, cy)) {
+
+            }
+
+            // Patch the brightess to 0.1 < x < 1.0, as brightness 0 is not off
+            var rgb = XyToRgb(cx, cy, light.config.state.bri / 255.0);
+            light.color = rgb;
+            break;
+
+        case 'hs':
+            var hsb = {
+                hue: light.config.state.hue / 65535.0
+                , sat : light.config.state.sat / 255
+                , bri : light.config.state.bri / 255
+            };
+            light.color = hsbToRgb(hsb); // hslToRgb(hsb.hue, hsb.sat, hsb.bri);
+
+            break;
+
+
+        case 'ct':
+            // CT isn't supported at the moment
+            break;
+    }
+
+}
+
+function fixRequest(request) {
+    request.payload = JSON.parse(request.rawPayload.toString());
+}
+
 function setLightStateHandler(request) {
+    fixRequest(request);
+
     var id = request.params['id'];
     var light = state.getLight(id);
     var response = [];
 
-    request.payload = JSON.parse(request.rawPayload.toString());
 
     console.log(request.payload);
     if (request.payload.on == true) {
@@ -154,49 +194,6 @@ function setLightStateHandler(request) {
         response.push({ "success": change });
     }
 
-    if (request.payload.xy) {
-        var cx = request.payload.xy[0];
-        var cy = request.payload.xy[1];
-
-        var brightness = request.payload.bri;
-        if (brightness === undefined) {
-            brightness = light.bri ;
-        }
-
-        if (!inReachOfLamps(light.model, cx, cy)) {
-
-        }
-
-        var rgb = XyToRgb(cx, cy, brightness / 255.0);
-        light.config.state.xy = [cx, cy];
-        light.config.state.colormode = 'cx';
-        console.log('XY resulted in ');
-        console.log(rgb);
-        light.color = rgb;
-
-        var change = {};
-        change["/lights/" + id + "/xy"] = request.payload.xy;
-        response.push({ "success": change });
-    }
-
-    var hsb = {};
-    var hasNewHsb = false;
-    if (request.payload.hue) {
-        hsb.hue = request.payload.hue / 65535.0;
-        hasNewHsb = true;
-        var change = {};
-        change["/lights/" + id + "/hue"] = request.payload.hue;
-        response.push({ "success": change });
-    }
-
-    if (request.payload.sat) {
-        hsb.sat = request.payload.sat / 255.0;
-        hasNewHsb = true;
-        var change = {};
-        change["/lights/" + id + "/sat"] = request.payload.sat;
-        response.push({ "success": change });
-    }
-
     if (request.payload.bri) {
         light.config.state.bri = request.payload.bri;
         var change = {};
@@ -204,20 +201,40 @@ function setLightStateHandler(request) {
         response.push({ "success": change });
     }
 
-    if (hasNewHsb) {
-        hsb = {
-            hue: hsb.hue || light.config.state.hue / 65535.0
-           , sat : hsb.sat || light.config.state.sat / 255
-           , bri : light.config.state.bri / 255
-        };
-        console.log('Converting hsb');
-        console.log(hsb);
-        light.config.state.hue = hsb.hue;
-        light.config.state.bri = hsb.bri;
-        light.config.state.sat = hsb.sat;
-        light.config.state.colormode = 'hs';
-        light.color = hsbToRgb(hsb); // hslToRgb(hsb.hue, hsb.sat, hsb.bri);
+
+    if (request.payload.xy) {
+
+        var cx = request.payload.xy[0];
+        var cy = request.payload.xy[1];
+
+        light.config.state.xy = [cx, cy];
+        light.config.state.colormode = 'xy';
+
+        var change = {};
+        change["/lights/" + id + "/xy"] = request.payload.xy;
+        response.push({ "success": change });
     }
+
+    if (request.payload.hue) {
+        light.config.state.hue = request.payload.hue;
+        light.config.state.colormode = 'hs';
+        var change = {};
+        change["/lights/" + id + "/hue"] = request.payload.hue;
+        response.push({ "success": change });
+    }
+
+    if (request.payload.sat) {
+        light.config.state.sat = request.payload.sat;
+        light.config.state.colormode = 'hs';
+        var change = {};
+        change["/lights/" + id + "/sat"] = request.payload.sat;
+        response.push({ "success": change });
+    }
+
+
+
+    calculateColor(light);
+
     console.log('Updating light ' + light.id);
     console.log(light.color);
     remoteLights.sendLight(light.id, light);
@@ -226,6 +243,24 @@ function setLightStateHandler(request) {
     remoteApiNotification.notifyApiCall(request, response);
 }
 
+function setLightNameHandler(request) {
+    fixRequest(request);
+
+    var response = [];
+    if (request.payload.name) {
+        var id = request.params['id'];
+        var light = state.getLight(id);
+        var change = {};
+        change['/lights/' + id + '/name'] = request.payload.name;
+        if (light) {
+            light.config.name = request.payload.name;
+            response.push({'success' : change});
+        }
+    }
+    request.reply(response);
+    remoteApiNotification.notifyApiCall(request, response);
+    remoteLights.sendLight(light.id, light);
+}
 
 module.exports = {
 
@@ -241,6 +276,13 @@ module.exports = {
                 , path : '/api/{username}/lights/{id}/state'
                 , config : {
                     handler : setLightStateHandler
+                }
+            }
+            , {
+                method: 'PUT'
+                , path : '/api/{username}/lights/{id}/name'
+                , config: {
+                    handler : setLightNameHandler
                 }
             }
         ])

@@ -105,6 +105,8 @@ h2 {
 div#call-list {
     width: 500px;
     float:left;
+    height: 400px;
+    overflow: scroll;
 }
 
 div#call-details {

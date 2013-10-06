@@ -1,5 +1,5 @@
 {
-  "name": "Huemulator",
+  "name": "huemulator",
   "description": "Emulator for Philips Hue API",
   "keywords": [ "hue","bridge", "emulator", "philips" ],
   "author": "Dave Brotherstone <davegb@pobox.com>",

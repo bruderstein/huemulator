@@ -16,7 +16,7 @@ if (process.argv.length > 2) {
 }
 
 
-var server = new hapi.createServer('0.0.0.0 ', state.port, {
+var server = new hapi.createServer('0.0.0.0', state.port, {
     files : {
         'relativeTo' : 'routes'
     }

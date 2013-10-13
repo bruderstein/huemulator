@@ -25,8 +25,8 @@ Then you can just
 
     npm install -g huemulator
 
-Running
--------
+Usage
+-----
 
 Once installed, on Linux or Mac just run
 
@@ -39,6 +39,16 @@ long as your library supports it, it should be fine).
 
 On Windows, you'll probably need to run the huemulator command from a command prompt with administrator privileges.
 I've not tested this yet though.
+
+If you get an error starting, it's likely that you've already got something listening on port 80 (Apache, Nginx, 
+IIS on windows).  Just stop these services, or start the emulator on a different port, e.g.
+
+    huemulator 8088
+
+Once the emulator is running, just fire up your browser and visit http://localhost/ (if you started on a different port,
+for example 8088 like in the example above, you'll need to go to http://localhost:8088/).  From there, you can
+see the status of the lights (they start in the "on" state, basically white), and also see any API calls that
+are made from that point on.  
 
 Known Issues
 ------------
